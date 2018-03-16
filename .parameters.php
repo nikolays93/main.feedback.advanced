@@ -13,6 +13,15 @@ while($arType = $dbType->GetNext())
 
 $arComponentParameters = array(
 	"PARAMETERS" => array(
+		"USER_FIELDS" => Array(
+			"NAME" => GetMessage("MFP_EMAIL_TEMPLATES"), 
+			"TYPE"=>"TEXT", 
+			"VALUES" => array(
+				'phone:Телефон'
+			),
+			"MULTIPLE"=>"Y", 
+			"PARENT" => "BASE",
+		),
 		"USE_CAPTCHA" => Array(
 			"NAME" => GetMessage("MFP_CAPTCHA"), 
 			"TYPE" => "CHECKBOX",

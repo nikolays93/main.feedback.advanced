@@ -37,6 +37,33 @@ if(strlen($arResult["OK_MESSAGE"]) > 0)
 		<input type="text" name="user_email" value="<?=$arResult["AUTHOR_EMAIL"]?>">
 	</div>
 
+	<?php
+	/** Custom: Start  */
+	if(isset($arParams["USER_FIELDS"]) && is_array($arParams["USER_FIELDS"])) {
+		foreach ($arParams["USER_FIELDS"] as $strField) {
+			if( ! $strField ) continue;
+
+			$required = false;
+			if( 0 === strpos($strField, "*") ){
+				$strField = mb_substr($strField, 1);
+				$required = true;
+			}
+
+			$arField = explode(':', trim( $strField ));
+			if( 0 === strpos($strField, "checkbox") ) continue;
+			?>
+			<div class="mf-<?=$arField[0];?>">
+				<div class="mf-text">
+					<?=$arField[1];?><?if($required):?><span class="mf-req">*</span><?endif?>
+				</div>
+				<input type="text" name="<?=$arField[0];?>" value="<?=$arResult["USER_FIELDS"][ $arField[0] ];?>" placeholder="<?//=$arField[0];?>">
+			</div>
+			<?php
+		}
+	}
+	/** Custom: End  */
+	?>
+
 	<div class="mf-message">
 		<div class="mf-text">
 			<?=GetMessage("MFT_MESSAGE")?><?if(empty($arParams["REQUIRED_FIELDS"]) || in_array("MESSAGE", $arParams["REQUIRED_FIELDS"])):?><span class="mf-req">*</span><?endif?>

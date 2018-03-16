@@ -38,6 +38,25 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && $_POST["submit"] <> '' && (!isset($_P
 			if((empty($arParams["REQUIRED_FIELDS"]) || in_array("MESSAGE", $arParams["REQUIRED_FIELDS"])) && strlen($_POST["MESSAGE"]) <= 3)
 				$arResult["ERROR_MESSAGE"][] = GetMessage("MF_REQ_MESSAGE");
 		}
+		/** Custom: Start  */
+		if(isset($arParams["USER_FIELDS"]) && is_array($arParams["USER_FIELDS"])) {
+			$MESSAGE = $_POST["MESSAGE"];
+			$MESSAGE .= "\r\n\r\n";
+			foreach ($arParams["USER_FIELDS"] as $strField) {
+				if( !$strField ) continue;
+				// as required
+				if( 0 === strpos($strField, "*") ) {
+					$arField = explode(':', trim( mb_substr($strField, 1) ));
+
+					if( !isset($_POST[ $arField[0] ]) || strlen( trim($_POST[ $arField[0] ]) ) < 1 )
+						$arResult["ERROR_MESSAGE"][] = sprintf("Поле %s обязательно к заполнению", $arField[1]);
+				}
+
+				$arResult["USER_FIELDS"][ $arField[0] ] = htmlspecialcharsbx($_POST[ $arField[0] ]);
+				$MESSAGE .= "\r\n" . $arField[1] . ": " . htmlspecialcharsbx($_POST[ $arField[0] ]);
+			}
+		}
+		/** Custom: End */
 		if(strlen($_POST["user_email"]) > 1 && !check_email($_POST["user_email"]))
 			$arResult["ERROR_MESSAGE"][] = GetMessage("MF_EMAIL_NOT_VALID");
 		if($arParams["USE_CAPTCHA"] == "Y")
@@ -61,7 +80,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && $_POST["submit"] <> '' && (!isset($_P
 				"AUTHOR" => $_POST["user_name"],
 				"AUTHOR_EMAIL" => $_POST["user_email"],
 				"EMAIL_TO" => $arParams["EMAIL_TO"],
-				"TEXT" => $_POST["MESSAGE"],
+				"TEXT" => $MESSAGE, // $_POST["MESSAGE"],
 			);
 			if(!empty($arParams["EVENT_MESSAGE_ID"]))
 			{
