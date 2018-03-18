@@ -40,8 +40,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && $_POST["submit"] <> '' && (!isset($_P
 		}
 		/** Custom: Start  */
 		if(isset($arParams["USER_FIELDS"]) && is_array($arParams["USER_FIELDS"])) {
-			$MESSAGE = $_POST["MESSAGE"];
-			$MESSAGE .= "\r\n\r\n";
+			$MESSAGE = '';
 			foreach ($arParams["USER_FIELDS"] as $strField) {
 				if( !$strField ) continue;
 				// as required
@@ -55,6 +54,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && $_POST["submit"] <> '' && (!isset($_P
 				$arResult["USER_FIELDS"][ $arField[0] ] = htmlspecialcharsbx($_POST[ $arField[0] ]);
 				$MESSAGE .= "\r\n" . $arField[1] . ": " . htmlspecialcharsbx($_POST[ $arField[0] ]);
 			}
+
+			$MESSAGE .= "\r\n\r\n";
+			$MESSAGE .= htmlspecialcharsbx($_POST["MESSAGE"]);
 		}
 		/** Custom: End */
 		if(strlen($_POST["user_email"]) > 1 && !check_email($_POST["user_email"]))
